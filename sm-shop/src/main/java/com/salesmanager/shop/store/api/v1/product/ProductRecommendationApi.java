@@ -1,10 +1,13 @@
 package com.salesmanager.shop.store.api.v1.product;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import com.salesmanager.core.business.services.reference.language.LanguageService;
+
+import javax.persistence.Query;
+import java.util.*;
+import javax.persistence.EntityManager;
+import javax.persistence.NonUniqueResultException;
+import javax.persistence.PersistenceContext;
+
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,6 +16,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,7 +33,7 @@ import com.salesmanager.core.model.catalog.product.image.ProductImage;
 import com.salesmanager.core.model.content.FileContentType;
 import com.salesmanager.core.model.content.ImageContentFile;
 import com.salesmanager.core.model.merchant.MerchantStore;
-import com.salesmanager.core.model.reference.language.Language;
+//import com.salesmanager.core.model.reference.language.Language;
 import com.salesmanager.shop.model.catalog.product.PersistableImage;
 import com.salesmanager.shop.populator.catalog.PersistableProductImagePopulator;
 import com.salesmanager.shop.store.api.exception.ResourceNotFoundException;
@@ -50,16 +54,78 @@ public class ProductRecommendationApi {
     
   private static final Logger LOGGER = LoggerFactory.getLogger(ProductRecommendationApi.class);
 
+  @PersistenceContext
+    private EntityManager em;
+
     // /api/v1/products/recommended
     @RequestMapping(value = "/api/v1/products/recommended", method=RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    String ProductRecommendation()        
+    public /*ResponseEntity<?>*/ String ProductRecommendation(@RequestParam("category") Long category, @RequestParam("langString") String lang)      
         {
         /* TODO: ADD CODE TO ACCEPT PARAMETERS HERE.*/
-        /* TODO: ADD CODE TO QUERY THE DATABASE HERE.*/
+        //Map<String,Language> langs = languageService.getLanguagesMap();
+        //Language lang = langs.get(lang);
 
-        String response = "called /api/v1/products/recommended -test1";
-        return response;
+
+
+        /* TODO: ADD CODE TO QUERY THE DATABASE HERE.*/
+        
+        //List<Product> products = ProductService.getProducts(category,lang);
+
+		StringBuilder qs = new StringBuilder();
+		qs.append("select distinct p from Product as p ");
+		qs.append("join fetch p.merchantStore merch ");
+		qs.append("join fetch p.availabilities pa ");
+		qs.append("left join fetch pa.prices pap ");
+		
+		qs.append("join fetch p.descriptions pd ");
+		qs.append("join fetch p.categories categs ");
+		
+		qs.append("left join fetch pap.descriptions papd ");
+		
+		//images
+		qs.append("left join fetch p.images images ");
+		
+		//options (do not need attributes for listings)
+		qs.append("left join fetch p.attributes pattr ");
+		qs.append("left join fetch pattr.productOption po ");
+		qs.append("left join fetch po.descriptions pod ");
+		qs.append("left join fetch pattr.productOptionValue pov ");
+		qs.append("left join fetch pov.descriptions povd ");
+		
+		//other lefts
+		qs.append("left join fetch p.manufacturer manuf ");
+		qs.append("left join fetch manuf.descriptions manufd ");
+		qs.append("left join fetch p.type type ");
+		qs.append("left join fetch p.taxClass tx ");
+		
+		//RENTAL
+		qs.append("left join fetch p.owner owner ");
+		qs.append("where categs.id in (:cid) ");
+		qs.append("and pd.language.code=:lang and papd.language.code=:lang ");
+		qs.append("and p.available=true and p.dateAvailable<=:dt ");
+
+        String hql = qs.toString();
+		Query q = this.em.createQuery(hql);
+
+    	q.setParameter("cid", category);
+    	q.setParameter("lang", lang);
+    	q.setParameter("dt", new Date());
+
+    	
+//    	@SuppressWarnings("unchecked")
+		List<Product> products =  q.getResultList();
+        //return products;
+        //String response = "called /api/v1/products/recommended with getProducts()" + Long.toString(category) + " " + lang;
+        //return response;
+        
+        List result = q.getResultList();
+        return result.toString();
+        
+        //return new ResponseEntity.ok(products);
+        
+       // Map<String,String> response = result.
+
         }
 }
