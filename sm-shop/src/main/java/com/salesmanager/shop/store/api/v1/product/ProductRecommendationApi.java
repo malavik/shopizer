@@ -33,7 +33,7 @@ import com.salesmanager.core.model.catalog.product.image.ProductImage;
 import com.salesmanager.core.model.content.FileContentType;
 import com.salesmanager.core.model.content.ImageContentFile;
 import com.salesmanager.core.model.merchant.MerchantStore;
-//import com.salesmanager.core.model.reference.language.Language;
+import com.salesmanager.core.model.reference.language.Language;
 import com.salesmanager.shop.model.catalog.product.PersistableImage;
 import com.salesmanager.shop.populator.catalog.PersistableProductImagePopulator;
 import com.salesmanager.shop.store.api.exception.ResourceNotFoundException;
@@ -49,8 +49,19 @@ import springfox.documentation.annotations.ApiIgnore;
  * @author Malavika Murali
  */
 @Controller
-public class ProductRecommendationApi {
+public class ProductRecommendationApi  {
     
+ // @Inject private ProductFacade productFacade;
+
+ // @Inject private StoreFacade storeFacade;
+
+ // @Inject private LanguageUtils languageUtils;
+
+  @Inject private ProductService productService;
+  @Inject private LanguageService languageService;
+
+ // @Inject private ProductReviewService productReviewService;
+
     
   private static final Logger LOGGER = LoggerFactory.getLogger(ProductRecommendationApi.class);
 
@@ -61,18 +72,20 @@ public class ProductRecommendationApi {
     @RequestMapping(value = "/api/v1/products/recommended", method=RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public /*ResponseEntity<?>*/ String ProductRecommendation(@RequestParam("category") Long category, @RequestParam("langString") String lang)      
+    public /*List<Product>*/ ResponseEntity<?> /*String*/ ProductRecommendation(@RequestParam("category") Long category, @RequestParam("lang") String lang) throws Exception      
         {
         /* TODO: ADD CODE TO ACCEPT PARAMETERS HERE.*/
-        //Map<String,Language> langs = languageService.getLanguagesMap();
-        //Language lang = langs.get(lang);
+        Map<String,Language> langs = languageService.getLanguagesMap();
+        Language language = langs.get(lang);
 
 
 
         /* TODO: ADD CODE TO QUERY THE DATABASE HERE.*/
-        
-        //List<Product> products = ProductService.getProducts(category,lang);
+        List<Long> catList = new ArrayList<Long>();
+        catList.add(category);
+        List<Product> products = productService.getProducts(catList,language);
 
+        /*
 		StringBuilder qs = new StringBuilder();
 		qs.append("select distinct p from Product as p ");
 		qs.append("join fetch p.merchantStore merch ");
@@ -112,20 +125,19 @@ public class ProductRecommendationApi {
     	q.setParameter("cid", category);
     	q.setParameter("lang", lang);
     	q.setParameter("dt", new Date());
-
+*/
     	
 //    	@SuppressWarnings("unchecked")
-		List<Product> products =  q.getResultList();
+		//List<Product> products =  q.getResultList();
         //return products;
         //String response = "called /api/v1/products/recommended with getProducts()" + Long.toString(category) + " " + lang;
         //return response;
         
-        List result = q.getResultList();
-        return result.toString();
+        //List result = q.getResultList();
+        //return result.toString();
         
-        //return new ResponseEntity.ok(products);
+        return ResponseEntity.ok(products);
         
-       // Map<String,String> response = result.
 
         }
 }
