@@ -1,6 +1,8 @@
 package com.salesmanager.shop.store.api.v1.product;
 
 import com.salesmanager.core.business.services.reference.language.LanguageService;
+import com.salesmanager.core.business.services.catalog.product.PricingService;
+
 
 import javax.persistence.Query;
 import java.util.*;
@@ -59,6 +61,8 @@ public class ProductRecommendationApi  {
 
   @Inject private ProductService productService;
   @Inject private LanguageService languageService;
+  @Inject private PricingService pricingService;
+
 
  // @Inject private ProductReviewService productReviewService;
 
@@ -81,9 +85,9 @@ public class ProductRecommendationApi  {
 
 
         /* TODO: ADD CODE TO QUERY THE DATABASE HERE.*/
-        List<Long> catList = new ArrayList<Long>();
-        catList.add(category);
-        List<Product> products = productService.getProducts(catList,language);
+        //List<Long> catList = new ArrayList<Long>();
+        //catList.add(category);
+        List<Product> products = productService.getProductRecommendation(category,language);
 
         /*
 		StringBuilder qs = new StringBuilder();
@@ -136,7 +140,7 @@ public class ProductRecommendationApi  {
         //List result = q.getResultList();
         //return result.toString();
         
-        return ResponseEntity.ok(products);
+        return ResponseEntity.status(HttpStatus.OK).body(products);
         
 
         }
