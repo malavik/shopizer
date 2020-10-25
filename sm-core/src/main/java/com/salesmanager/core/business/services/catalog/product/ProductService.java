@@ -36,6 +36,9 @@ public interface ProductService extends SalesManagerEntityService<Long, Product>
 	List<Product> listByTaxClass(TaxClass taxClass);
 
 	List<Product> getProducts(List<Long> categoryIds, Language language)
+            throws ServiceException;
+            
+    List<Product> getProductRecommendation(Long categoryId, Language language)
 			throws ServiceException;
 
 	Product getBySeUrl(MerchantStore store, String seUrl, Locale locale);

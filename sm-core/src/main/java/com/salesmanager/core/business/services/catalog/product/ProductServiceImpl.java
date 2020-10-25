@@ -123,7 +123,14 @@ public class ProductServiceImpl extends SalesManagerEntityServiceImpl<Long, Prod
 		
 	}
 	
-
+	@Override
+	public List<Product> getProductRecommendation(Long categoryId, Language language) throws ServiceException {
+		
+		//@SuppressWarnings({ "unchecked", "rawtypes" })
+		//Set<Long> ids = new HashSet(categoryIds);
+		return productRepository.getProductRecommendationListByCategories(categoryId, language);
+		
+	}
 
 	@Override
 	public ProductDescription getProductDescription(Product product, Language language) {

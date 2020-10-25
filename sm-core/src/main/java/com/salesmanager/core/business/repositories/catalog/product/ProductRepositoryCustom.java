@@ -25,6 +25,9 @@ public interface ProductRepositoryCustom {
 		List<Product> getProductsListByCategories(@SuppressWarnings("rawtypes") Set categoryIds);
 
 		List<Product> getProductsListByCategories(Set<Long> categoryIds,
+                Language language);
+                
+        List<Product> getProductRecommendationListByCategories(Long categoryId,
 				Language language);
 
 		List<Product> listByTaxClass(TaxClass taxClass);
