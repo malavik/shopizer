@@ -140,7 +140,7 @@ public class ProductRecommendationApi  {
         //List result = q.getResultList();
         //return result.toString();
         
-        return ResponseEntity.status(HttpStatus.OK).body(products);
+        return ResponseEntity.ok(products);
         
 
         }
