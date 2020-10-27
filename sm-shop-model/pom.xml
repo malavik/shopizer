@@ -10,17 +10,8 @@
   	<parent>
 		<groupId>com.shopizer</groupId>
 		<artifactId>shopizer</artifactId>
-		<version>2.7.0</version>
+		<version>2.7.1-SNAPSHOT</version>
 	</parent>
-
-<!--   	<parent> 
-		<groupId>org.springframework.boot</groupId> 
-		<artifactId>spring-boot-starter-parent</artifactId> 
-		<version>1.5.18.RELEASE</version> 
-	</parent>
-	<groupId>com.shopizer</groupId>
-	<version>2.7.0</version> -->
-
 
 	<licenses>
 		<license>
